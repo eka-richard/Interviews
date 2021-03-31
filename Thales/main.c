@@ -20,18 +20,18 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 int test_1(int N, int M, int I, int J)
 {
-    int output;
-    int insertedNumber = (M << I) | (N & ~(0xFFFFFFFF << I));
-
-    output = insertedNumber | (insertedNumber & N);
+    int output = (M << I) | (N & ~(0xFFFFFFFF << I)) | (N & ~(0xFFFFFFFF >> (31-J)));
 
     return output;
 }
 
-int test_2(int* building)
+int test_2(char* building)
 {
     int index = 50;
 
@@ -49,39 +49,126 @@ int test_2(int* building)
 
     if (index == 50)
     {
-        index = 0;
-
-        for (int i = 0; i <= index; i++)
+        for (int i = 0; i <= index; ++i)
         {
-            if (building[index] > 0)
+            if (building[i] > 0)
             {
+                index = i;
                 break;
             }
         }
     }
 
-    return;
+    return (index + 1);
+}
+
+int test_3(int input1, int input2)
+{
+    int output;
+
+    if (input1 < input2)
+    {
+        test_3(input2, input1);
+    }
+
+    if (input2 > 0)
+    {
+        output = input1 + test_3(input1, input2 - 1);
+    }
+    else
+    {
+        output = 0;
+    }
+    
+    return output;
+}
+
+int test_4(int input1, int input2)
+{
+    while (input2 > 0)
+    {
+        int carry = (input1 & input2) << 1;
+        input1 = input1 ^ input2;
+        input2 = carry;
+    }
+
+    return input1;
+}
+
+int test_5(int input)
+{
+    int count = 0;
+
+    for (int i = 0; i < input; i++)
+    {
+        int tempVal = i;
+        while (tempVal != 0)
+        {
+            if (tempVal % 10 == 2)
+            {
+                count++;
+            }
+            tempVal = tempVal / 10;
+        }
+    }
+
+    return count;
 }
 
 int main()
 {
     // test_1
     int N, M, I, J;
+    printf("Insert input for test_1: ");
     scanf("%d %d %d %d", &N, &M, &I, &J);
     printf("Test_1 output: ");
-    printf("%d\n", test_1(N, M, I, J);
+    printf("%d\n", test_1(N, M, I, J));
 
 
     // test_2
-    int building[100];
-    int floorLimit = (rand() % 100) + 1;
+    char building[100];
+    int floorLimit;
+
+    srand(time(0));
+    floorLimit = (rand() % 100) + 1;
 
     printf("Lowest floor that will break the egg is %d\n", floorLimit);
 
-    memset(building, 0, floorLimit);
-    memset(&building[floorLimit], 1, (100 - floorLimit));
+    memset(building, 0, (floorLimit - 1));
+    memset(&building[(floorLimit - 1)], 1, (100 - (floorLimit - 1)));
 
+    for (int i = 0; i < 100; i++)
+    {
+        printf("%d ", building[i]);
+    }
+    printf("\n\n");
     printf("Floor search result: %d\n", test_2(building));
 
+
+    // test_3
+    int t3_input1, t3_input2;
+    printf("Insert input for test_3: ");
+    scanf("%d %d", &t3_input1, &t3_input2);
+
+    printf("Multiplication result: %d", test_3(t3_input1, t3_input2));
+
+
+    // test_4
+    int t4_input1, t4_input2;
+    printf("Insert input for test_4: ");
+    scanf("%d %d", &t4_input1, &t4_input2);
+
+    printf("Multiplication result: %d\n", test_4(t4_input1, t4_input2));
+
+
+    // test_5
+    int t5_input;
+    printf("Insert input for test_5: ");
+    scanf("%d", &t5_input);
+
+    printf("Numer of 2s are: %d\n", test_5(t5_input));
+
+    printf("\n\n");
+    system("pause");
     return 0;
 }
